@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+  <name>WebMCP Catalog Bridge</name>
+  <code>webmcp_catalog_bridge</code>
+  <version>1.0.0</version>
+  <author>CodeCart PRO</author>
+  <link>https://codecartpro.com</link>
+  <file path="catalog/controller/common/header.php">
+    <operation error="skip">
+      <search><![CDATA[$data['name'] = $this->config->get('config_name');]]></search>
+      <add position="after"><![CDATA[
+        $data['webmcp_catalog_js'] = '';
+        $data['webmcp_catalog_css'] = '';
+        $data['webmcp_catalog_search_url'] = '';
+        $data['webmcp_catalog_product_url'] = '';
+        $data['webmcp_catalog_locale'] = '';
+        $data['webmcp_catalog_live_results'] = 0;
+        $data['webmcp_catalog_max_results'] = 6;
+        if ((int)$this->config->get('module_webmcp_catalog_status') === 1) {
+            $ccwm_base = $this->config->get('config_ssl') ? $this->config->get('config_ssl') : $this->config->get('config_url');
+            $ccwm_base = rtrim((string)$ccwm_base, '/') . '/';
+            $ccwm_locale = isset($this->session->data['language']) ? strtolower((string)$this->session->data['language']) : strtolower((string)$this->config->get('config_language'));
+            $ccwm_locale = preg_replace('/[^a-z0-9_.-]/i', '', $ccwm_locale);
+            $data['webmcp_catalog_js'] = $ccwm_base . 'catalog/view/javascript/webmcp_catalog.js?v=100';
+            $data['webmcp_catalog_css'] = $ccwm_base . 'catalog/view/stylesheet/webmcp_catalog.css?v=100';
+            $data['webmcp_catalog_search_url'] = $this->url->link('extension/module/webmcp_catalog/search', '', true);
+            $data['webmcp_catalog_product_url'] = $this->url->link('extension/module/webmcp_catalog/product', '', true);
+            $data['webmcp_catalog_locale'] = $ccwm_locale;
+            $data['webmcp_catalog_live_results'] = (int)$this->config->get('module_webmcp_catalog_live_results');
+            $ccwm_max = (int)$this->config->get('module_webmcp_catalog_max_results');
+            $data['webmcp_catalog_max_results'] = ($ccwm_max >= 1 && $ccwm_max <= 10) ? $ccwm_max : 6;
+        }
+      ]]></add>
+    </operation>
+  </file>
+  <file path="catalog/view/theme/*/template/common/header.twig">
+    <operation error="skip">
+      <search><![CDATA[</head>]]></search>
+      <add position="before"><![CDATA[
+{% if webmcp_catalog_js %}
+<link href="{{ webmcp_catalog_css }}" rel="stylesheet" media="screen">
+<script src="{{ webmcp_catalog_js }}" defer data-webmcp-catalog="1" data-search-url="{{ webmcp_catalog_search_url }}" data-product-url="{{ webmcp_catalog_product_url }}" data-locale="{{ webmcp_catalog_locale }}" data-live-results="{{ webmcp_catalog_live_results }}" data-max-results="{{ webmcp_catalog_max_results }}"></script>
+{% endif %}
+      ]]></add>
+    </operation>
+  </file>
+</modification>
