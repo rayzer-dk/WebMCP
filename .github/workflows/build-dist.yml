@@ -7,8 +7,6 @@ on:
     paths:
       - 'opencart-module/**'
       - '.github/workflows/build-dist.yml'
-  issues:
-    types: [opened]
 
 permissions:
   contents: write
