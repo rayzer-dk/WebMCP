@@ -1,2 +1,2 @@
-WebMCP Catalog Bridge competition edition v1.1.0
+WebMCP Catalog Bridge competition edition v1.1.1
 Built automatically from the public opencart-module source.
