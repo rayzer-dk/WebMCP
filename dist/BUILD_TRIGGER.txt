@@ -1,1 +1,0 @@
-Build synchronization marker for the competition package.
