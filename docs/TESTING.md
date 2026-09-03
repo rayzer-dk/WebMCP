@@ -10,11 +10,11 @@ Open:
 
 https://fermateh.com.ua/en/
 
-Verify Site tools contains:
+After the module is enabled, Site tools should contain:
 
 - Search Products
 - Get Product
-- Add To Cart, when the administrator has enabled the optional cart action
+- Add To Cart
 
 Recommended final test prompt:
 
@@ -27,66 +27,24 @@ Expected behavior:
 - Current price and stock come from OpenCart.
 - The storefront displays the same products in the Shared human + AI results panel.
 - The agent calls Get Product only for the selected recommendation.
-- If cart action is enabled, Add To Cart changes the active OpenCart cart.
+- Add To Cart changes the active OpenCart cart only after the user asks for it.
 - The visible cart refreshes without a page reload.
 - The action receipt states `scope=cart_only`, `order_placed=false` and `payment_performed=false`.
 
 ## Trust-contract test
 
-Inspect the Search Products result.
+Search Products should return signals including `authoritative=true`, `live_price=true`, `live_stock=true`, `result_is_final=true`, `browser_verification_required=false` and `navigation_required=false`. The agent should not reopen product pages only to verify data already returned by the authoritative tool.
 
-Expected signals include:
+## Cart boundary test
 
-- authoritative = true
-- live_price = true
-- live_stock = true
-- result_is_final = true
-- browser_verification_required = false
-- navigation_required = false
+Disable WebMCP Add To Cart in module settings and reload the storefront. Site tools should then contain only Search Products and Get Product. Re-enable the setting, save and reload; all three tools should return.
 
-The agent should not reopen product pages only to verify price or stock already returned by the authoritative tool.
-
-## Product detail test
-
-After search, ask for technical details of one selected item.
-
-Expected behavior:
-
-- The agent calls Get Product for that product_id.
-- It does not call Get Product for every candidate.
-
-## Cart safety test
-
-Keep the cart action disabled in module settings and reload the storefront.
-
-Expected behavior:
-
-- Site tools contains only the two read-only tools.
-
-Enable WebMCP Add To Cart, save settings and open/reload a storefront document.
-
-Expected behavior:
-
-- Site tools contains three tools.
-- Add To Cart accepts a selected simple product and quantity.
-- Products with required options are rejected for shopper completion.
-- No checkout, order creation or payment tool exists.
+Products with required options must be rejected for shopper completion, and no checkout, order-creation or payment tool exists.
 
 ## Language test
 
-Open an English, Ukrainian or Russian storefront language and repeat a search.
-
-Expected behavior:
-
-- The tool result follows the currently open storefront language.
-- Product names/descriptions come from the corresponding OpenCart language.
+Repeat a search on English, Ukrainian and Russian storefront pages. The result locale and product-language data should follow the currently open page.
 
 ## Disabled-state test
 
-Disable the module in admin.
-
-Expected behavior:
-
-- No WebMCP JS or CSS is injected into storefront pages.
-- Tool endpoints return 404.
-- No background jobs or extra storefront SQL queries are created by the module.
+Disable the whole module. No WebMCP JS or CSS should be injected, tool endpoints should return 404, and the module should create no background work.
