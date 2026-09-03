@@ -1,1 +1,2 @@
-The GitHub Actions workflow rebuilds the install ZIP from opencart-module/ and verifies it with unzip -t and SHA-256.
+WebMCP Catalog Bridge competition edition v1.1.0
+Built automatically from the public opencart-module source.
