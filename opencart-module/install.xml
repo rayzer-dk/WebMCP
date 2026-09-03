@@ -2,7 +2,7 @@
 <modification>
   <name>WebMCP Catalog Bridge</name>
   <code>webmcp_catalog_bridge</code>
-  <version>1.1.0</version>
+  <version>1.1.1</version>
   <author>CodeCart PRO</author>
   <link>https://codecartpro.com</link>
   <file path="catalog/controller/common/header.php">
@@ -23,8 +23,8 @@
             $ccwm_base = rtrim((string)$ccwm_base, '/') . '/';
             $ccwm_locale = isset($this->session->data['language']) ? strtolower((string)$this->session->data['language']) : strtolower((string)$this->config->get('config_language'));
             $ccwm_locale = preg_replace('/[^a-z0-9_.-]/i', '', $ccwm_locale);
-            $data['webmcp_catalog_js'] = $ccwm_base . 'catalog/view/javascript/webmcp_catalog.js?v=110';
-            $data['webmcp_catalog_css'] = $ccwm_base . 'catalog/view/stylesheet/webmcp_catalog.css?v=110';
+            $data['webmcp_catalog_js'] = $ccwm_base . 'catalog/view/javascript/webmcp_catalog.js?v=111';
+            $data['webmcp_catalog_css'] = $ccwm_base . 'catalog/view/stylesheet/webmcp_catalog.css?v=111';
             $data['webmcp_catalog_search_url'] = $this->url->link('extension/module/webmcp_catalog/search', '', true);
             $data['webmcp_catalog_product_url'] = $this->url->link('extension/module/webmcp_catalog/product', '', true);
             $data['webmcp_catalog_cart_url'] = $this->url->link('extension/module/webmcp_catalog/cart', '', true);
