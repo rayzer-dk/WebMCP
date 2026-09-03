@@ -1,1 +1,1 @@
-4e3df81d27e82f327f5a58a10086ce2e88b08d8d40c24113b085c8b3942de521  WebMCP_Catalog_Challenge_v1.0.0.ocmod.zip
+ab53c45f4f0c835e8d2849a30597a1a1a7c52087d6463add0798eec2e369186d  WebMCP_Catalog_Challenge_v1.0.0.ocmod.zip
