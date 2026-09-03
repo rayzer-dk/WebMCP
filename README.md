@@ -1,6 +1,6 @@
 # WebMCP Catalog Bridge for OpenCart
 
-Open-source competition edition of the WebMCP storefront layer running on FermaTeh.
+Open-source competition edition of the WebMCP storefront layer demonstrated on FermaTeh.
 
 Live demo: https://fermateh.com.ua/en/
 
@@ -12,16 +12,18 @@ Suggested judge prompt:
 
 WebMCP Catalog Bridge turns a normal OpenCart storefront into an agent-native catalog without asking the agent to scrape or guess the UI.
 
-The page registers two read-only tools with the browser-native WebMCP API:
+The repository contains the browser-native WebMCP registration pattern required by the challenge:
 
 ```js
 document.modelContext.registerTool({
   name: "search_products",
-  description: "Primary product-discovery tool for this store...",
-  inputSchema: { /* query, limit, min_price, max_price, in_stock */ },
-  execute: async (input) => { /* same-origin OpenCart request */ }
+  description: "Search the product catalog",
+  inputSchema: { /* ... */ },
+  execute: async (input) => { /* ... */ }
 });
 ```
+
+The production bridge resolves `document.modelContext` first (with a compatibility fallback where available), then registers the same tools against that resolved context. The full implementation is in `opencart-module/upload/catalog/view/javascript/webmcp_catalog.js`.
 
 The tools are:
 
