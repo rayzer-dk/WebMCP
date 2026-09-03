@@ -8,7 +8,7 @@ Demo video: https://youtu.be/etBFEEBXYAA
 
 Public submission concept: a shared human + AI storefront where agents search, compare and act on live commerce data through WebMCP.
 
-Suggested judge prompt:
+## Suggested judge prompt
 
 > Open https://fermateh.com.ua/en/ in the built-in browser and use the website's WebMCP tools. Find 3 animal repellents currently in stock between 5,000 and 15,000 UAH. Compare them, recommend the best option for a farm, field or garden, use Get Product for the recommendation, then add 1 unit of the recommended simple product to the cart. Do not place an order or make a payment.
 
@@ -27,158 +27,84 @@ document.modelContext.registerTool({
 
 The complete implementation is in `opencart-module/upload/catalog/view/javascript/webmcp_catalog.js`.
 
-The competition edition exposes up to three tools:
+The competition edition provides three tools when the module is enabled:
 
 - `search_products` — authoritative product discovery with live OpenCart price, stock, URLs, images and attributes.
 - `get_product` — detailed structured information for one selected product.
-- `add_to_cart` — optional write tool that adds one selected simple product to the current OpenCart cart. It never places an order and never performs payment.
+- `add_to_cart` — bounded write tool that adds one selected simple product to the current OpenCart cart. It never places an order and never performs payment.
 
-`add_to_cart` is disabled by default and must be explicitly enabled by the store administrator.
+For fresh competition-edition installs, Add To Cart is preset enabled so judges immediately see all three tools after the administrator enables the module. The module itself still installs disabled, so nothing runs until it is explicitly enabled. The cart action can also be disabled independently.
 
-## Why this is a strong WebMCP use case
+## Why WebMCP
 
 Online stores already know their catalog, price, stock, product identity and cart state. A general browser agent normally has to reconstruct that information from the visible UI by navigating search pages, opening product pages and parsing DOM content.
 
-WebMCP lets the storefront expose those domain operations directly. The agent can ask the store for authoritative results instead of imitating a human browser session.
-
-For the live FermaTeh demo, server-side product searches typically complete in tens of milliseconds. Current price and stock are read from OpenCart at call time.
+WebMCP exposes those domain operations directly. The agent asks the store for authoritative data instead of imitating a human browser session. On the live FermaTeh demo, server-side product search typically completes in tens of milliseconds and current price and stock are read from OpenCart at call time.
 
 ## Shared human + AI storefront
 
-The website does not disappear when the agent arrives.
+After a real WebMCP search, the storefront renders a visible `Shared human + AI results` panel. The shopper sees the same products the agent received, including real images, current price, current stock and links.
 
-After a real WebMCP search, the storefront renders a visible `Shared human + AI results` panel. The shopper sees the same live products the agent received, including real images, current price, current stock and links.
-
-The search result also carries an explicit trust contract, including signals such as:
-
-- `authoritative: true`
-- `live_price: true`
-- `live_stock: true`
-- `result_is_final: true`
-- `browser_verification_required: false`
-- `navigation_required: false`
-
-This tells the agent that the store itself is the source of truth and that reopening product pages only to verify the same information is unnecessary.
+Search results include an explicit trust contract with signals such as `authoritative: true`, `live_price: true`, `live_stock: true`, `result_is_final: true`, `browser_verification_required: false` and `navigation_required: false`. This tells the agent that the store is the source of truth and avoids unnecessary product-page re-checking.
 
 ## Read + write collaboration
 
-The strongest demo flow is:
-
-1. Human asks for products in natural language.
-2. Agent calls `Search Products`.
-3. OpenCart returns live authoritative matches.
-4. Human sees the same products in the shared storefront panel.
-5. Agent compares results and calls `Get Product` only for the recommendation.
-6. If the user explicitly requests it and the administrator enabled the action, the agent calls `Add To Cart`.
-7. The active OpenCart cart is changed and the visible storefront cart is refreshed immediately.
-8. The action receipt explicitly states that no order and no payment were submitted.
+The human asks for products in natural language. The agent calls Search Products. OpenCart returns live authoritative matches. The shopper sees those same products on the page. The agent uses Get Product only for the selected recommendation. If the user explicitly asks to add it, Add To Cart changes the active OpenCart cart and refreshes the visible cart UI. The returned receipt explicitly states that no order and no payment were submitted.
 
 This is a real state-changing WebMCP workflow on a live commerce session, not a simulated chat response.
 
 ## Human presentation vs agent payload
 
-The project separates model-oriented structured results from human-oriented visual presentation.
-
-The agent receives compact structured commerce data. The shopper receives product cards and cart confirmation on the storefront. Both are derived from the same underlying tool result.
-
-This keeps the model payload focused while preserving a clear and inspectable human experience.
-
-## Architecture
-
-```text
-ChatGPT in-app browser / Chrome WebMCP
-             |
-             | document.modelContext.registerTool()
-             v
-      webmcp_catalog.js
-             |
-             | same-origin JSON POST
-             v
-OpenCart WebMCP controller
-             |
-      +------+----------------+
-      |                       |
- catalog search          cart mutation
- live price/stock        (opt-in only)
-      |                       |
-      +----------+------------+
-                 |
-         shared result state
-          /             \
-      agent            human UI
-```
-
-Catalog truth remains in OpenCart. Final price, currency, stock, SEO URL, image and attributes are hydrated when the tool is called.
+The agent receives compact structured commerce data while the shopper receives product cards and cart confirmation on the storefront. Both are derived from the same underlying tool result, keeping model payloads focused while preserving a clear human-visible interaction.
 
 ## Language handling
 
-The WebMCP layer follows the language of the currently open storefront page instead of trusting an arbitrary agent-selected locale. This keeps agent results aligned with what the human is viewing.
+The WebMCP layer follows the language of the currently open storefront page. Product names and descriptions therefore stay aligned with what the human is viewing.
 
-## Security
+## Security boundary
 
-- Module installs disabled by default.
-- `Add To Cart` is a separate opt-in write action and is disabled by default.
-- WebMCP endpoints are POST-only and JSON-only.
-- Same-origin / same-site browser requests are enforced.
-- Request bodies are size-limited.
-- A per-session rate limit protects public tool endpoints.
-- Numeric identifiers are validated and cast.
-- Products with required options are rejected by the write tool and left for shopper completion.
-- `Add To Cart` changes the cart only; order placement and payment are not implemented by this competition edition.
+- The module installs disabled.
+- Search Products and Get Product are read-only.
+- Add To Cart is limited to the current cart and requires an explicit user request before the agent should call it.
+- Products with required options are rejected for shopper completion.
+- Checkout, order placement and payment are not implemented.
+- Endpoints are POST-only and JSON-only, same-origin/same-site checks are enforced, request sizes are bounded and a per-session rate limit protects public calls.
 
 See `docs/SECURITY.md` for details.
 
 ## Install on OpenCart 3.x / ocStore 3.x
 
 1. Back up the site files and database.
-2. Build `WebMCP_Catalog_Challenge_v1.1.0.ocmod.zip` from `opencart-module/` or use the source directly.
+2. Use `dist/WebMCP_Catalog_Challenge_v1.1.1.ocmod.zip` or build it from `opencart-module/`.
 3. Upload the archive in Extensions > Installer.
 4. Refresh Extensions > Modifications.
-5. Install `WebMCP Catalog Bridge` under Extensions > Modules.
+5. Install WebMCP Catalog Bridge under Extensions > Modules.
 6. Open its settings, enable the module and save.
-7. Keep `WebMCP Add To Cart` disabled unless you intentionally want the write action.
-8. Open the storefront in ChatGPT's in-app browser or a WebMCP-enabled Chrome build.
-9. Verify Site tools shows Search Products and Get Product; when cart action is enabled it should also show Add To Cart.
+7. Reload the storefront in ChatGPT's in-app browser or another WebMCP-enabled browser.
+8. Verify Site tools shows Search Products, Get Product and Add To Cart.
 
-## Build the install archive
+To expose only read tools, disable WebMCP Add To Cart in module settings and reload the storefront.
+
+## Build
 
 ```bash
 cd opencart-module
-zip -r ../dist/WebMCP_Catalog_Challenge_v1.1.0.ocmod.zip install.xml upload
+zip -r ../dist/WebMCP_Catalog_Challenge_v1.1.1.ocmod.zip install.xml upload
 ```
 
-## What was built during the WebMCP Challenge
+## What was built during the challenge
 
-FermaTeh and its OpenCart catalog existed before the challenge. The new challenge work is the WebMCP interaction layer added to the existing storefront.
-
-Challenge-period work includes:
-
-- browser-native `document.modelContext.registerTool()` integration
-- authoritative structured product discovery
-- live OpenCart price and stock hydration
-- multilingual page-locale binding
-- explicit trust contract to prevent redundant DOM verification
-- shared human + AI storefront presentation
-- compact agent payload vs visual human presentation
-- optional Add To Cart WebMCP write action
-- live storefront cart refresh and action receipt
-- same-origin validation, payload limits and rate limiting
-
-See `docs/WHAT_IS_NEW.md` for the breakdown.
+FermaTeh and its OpenCart catalog existed before the challenge. The challenge work is the WebMCP interaction layer: browser-native tool registration, authoritative product discovery, live price/stock hydration, multilingual page binding, trust-contract semantics, shared human + AI presentation, compact agent payloads, Add To Cart, live cart synchronization, cart-only action receipts and public endpoint protections.
 
 ## Repository layout
 
 ```text
 opencart-module/       installable OpenCart competition edition
 docs/                  architecture, security, testing and demo notes
-dist/                  build artifacts / checksums
+dist/                  reproducible build artifacts and checksums
 DEVPOST_SUBMISSION.md  submission copy
 LICENSE                MIT license
 ```
-
-## Demo video
-
-https://youtu.be/etBFEEBXYAA
 
 ## License
 
