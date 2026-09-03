@@ -1,61 +1,20 @@
-# Demo video script (target: 2:15–2:40)
+# Final demo video
 
-## 0:00–0:20 — Problem
+Public YouTube demo: https://youtu.be/etBFEEBXYAA
 
-Show the FermaTeh storefront.
+The final competition workflow demonstrates:
 
-Voiceover:
+1. A normal live OpenCart storefront.
+2. Browser-native Site tools exposed by the page.
+3. `Search Products` for authoritative live catalog discovery.
+4. `Get Product` only for the selected recommendation.
+5. The `Shared human + AI results` storefront panel showing the same live product state to the shopper.
+6. The optional `Add To Cart` WebMCP write action.
+7. Immediate visible cart synchronization in the active OpenCart session.
+8. An action receipt confirming that no order and no payment were submitted.
 
-“Product discovery is a structured commerce task, but browser agents normally have to navigate search pages, filters and product cards. WebMCP lets the store expose the operation directly.”
+Recommended judge prompt:
 
-## 0:20–0:40 — Site tools
+> Find 3 animal repellents currently in stock between 5,000 and 15,000 UAH. Compare them and recommend the best option for a farm, field or garden. Use Get Product for the recommended item. Then add 1 unit of the recommended simple product to the cart. Do not place an order or make a payment.
 
-Open the Site tools menu and show `Search Products` and `Get Product`.
-
-Voiceover:
-
-“This existing OpenCart store now exposes two read-only browser-native WebMCP tools.”
-
-## 0:40–1:25 — Main request
-
-Prompt:
-
-“Find and show 3 animal repellents priced from 5,000 to 10,000 UAH.”
-
-Keep the Site tools invocation visible if possible.
-
-Voiceover:
-
-“The agent sends one structured catalog request. OpenCart resolves the product type and constraints, then reads current price and stock from the commerce backend.”
-
-## 1:25–1:55 — Human-agent shared result
-
-Focus on the `Products received by AI` panel with real product images, prices and stock.
-
-Voiceover:
-
-“The same products returned to the agent are also rendered visibly on the storefront. The human can see exactly what the agent received and open a result directly.”
-
-## 1:55–2:20 — Why WebMCP
-
-Show the concise ChatGPT answer and product links.
-
-Voiceover:
-
-“There is no DOM guessing and no need to open multiple product pages to verify catalog facts. The agent gets an explicit interface while the human keeps the normal shopping experience.”
-
-## 2:20–2:35 — Implementation
-
-Briefly show the GitHub repository and the `document.modelContext.registerTool()` section.
-
-Voiceover:
-
-“The competition edition is open source. It registers the tools in the browser and uses same-origin OpenCart endpoints for live catalog data.”
-
-## Recording notes
-
-- Record a clean run without connection-retry messages.
-- Use the English storefront for the submission unless another language demonstrates the experience better.
-- Keep the product result panel visible for several seconds.
-- Do not expose admin credentials, private logs, customer data or API keys.
-- Keep the final public video concise and include audio.
+The key idea is not only agent-side tool execution. The human and agent share the live storefront state: the model receives compact structured data, while the shopper sees visual product results and cart confirmation on the website itself.
