@@ -38,6 +38,77 @@ class ControllerExtensionModuleWebmcpCatalog extends Controller {
         return $this->json($result, !empty($result['ok']) ? 200 : 404);
     }
 
+    public function cart() {
+        if (!$this->enabled()) {
+            return $this->json(array('ok' => false, 'error' => 'module_disabled'), 404);
+        }
+        if ((int)$this->config->get('module_webmcp_catalog_cart_action') !== 1) {
+            return $this->json(array('ok' => false, 'error' => 'cart_action_disabled'), 403);
+        }
+        if (!$this->allowRequest()) {
+            return;
+        }
+
+        $payload = $this->readJson(8192);
+        if ($payload === null) {
+            return;
+        }
+
+        $product_id = isset($payload['product_id']) ? (int)$payload['product_id'] : 0;
+        $quantity = isset($payload['quantity']) ? (int)$payload['quantity'] : 1;
+        if ($product_id < 1) {
+            return $this->json(array('ok' => false, 'error' => 'product_id_required'), 400);
+        }
+        if ($quantity < 1 || $quantity > 999) {
+            return $this->json(array('ok' => false, 'error' => 'invalid_quantity'), 400);
+        }
+
+        $this->load->model('catalog/product');
+        $product = $this->model_catalog_product->getProduct($product_id);
+        if (!$product || empty($product['status'])) {
+            return $this->json(array('ok' => false, 'error' => 'product_not_found'), 404);
+        }
+
+        $options = $this->model_catalog_product->getProductOptions($product_id);
+        foreach ($options as $option) {
+            if (!empty($option['required'])) {
+                return $this->json(array(
+                    'ok' => false,
+                    'error' => 'product_options_required',
+                    'product_id' => $product_id,
+                    'message' => 'This product requires options and must be completed by the shopper.'
+                ), 400);
+            }
+        }
+
+        $this->cart->add($product_id, $quantity);
+        $currency = isset($this->session->data['currency']) ? $this->session->data['currency'] : $this->config->get('config_currency');
+        $count = (int)$this->cart->countProducts();
+        $total_value = (float)$this->cart->getTotal();
+        $total = $this->currency->format($total_value, $currency);
+
+        return $this->json(array(
+            'ok' => true,
+            'action' => 'add_to_cart',
+            'product_id' => $product_id,
+            'quantity' => $quantity,
+            'product_name' => isset($product['name']) ? (string)$product['name'] : '',
+            'cart_item_count' => $count,
+            'cart_total' => $total,
+            'action_receipt' => array(
+                'status' => 'committed',
+                'scope' => 'cart_only',
+                'order_placed' => false,
+                'payment_performed' => false,
+                'reversible_by_user' => true
+            ),
+            'human_agent_shared_state' => array(
+                'cart_updated' => true,
+                'visible_to_human' => true
+            )
+        ), 200);
+    }
+
     private function enabled() {
         return (int)$this->config->get('module_webmcp_catalog_status') === 1;
     }
