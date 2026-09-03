@@ -30,7 +30,7 @@ class ControllerExtensionModuleWebmcpCatalog extends Controller {
             'module_webmcp_catalog_status' => 0,
             'module_webmcp_catalog_live_results' => 1,
             'module_webmcp_catalog_max_results' => 6,
-            'module_webmcp_catalog_cart_action' => 0
+            'module_webmcp_catalog_cart_action' => 1
         );
         foreach ($fields as $key => $default) {
             if (isset($this->request->post[$key])) {
@@ -56,7 +56,7 @@ class ControllerExtensionModuleWebmcpCatalog extends Controller {
             'module_webmcp_catalog_status' => 0,
             'module_webmcp_catalog_live_results' => 1,
             'module_webmcp_catalog_max_results' => 6,
-            'module_webmcp_catalog_cart_action' => 0
+            'module_webmcp_catalog_cart_action' => 1
         ));
     }
 
