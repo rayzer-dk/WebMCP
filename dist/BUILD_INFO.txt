@@ -1,0 +1,1 @@
+The GitHub Actions workflow rebuilds the install ZIP from opencart-module/ and verifies it with unzip -t and SHA-256.
