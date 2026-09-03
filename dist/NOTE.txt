@@ -1,0 +1,1 @@
+The installable OCMOD ZIP is being synchronized with the audited competition source. Use SHA256SUMS.txt to verify the final package.
