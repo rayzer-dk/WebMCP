@@ -1,3 +1,3 @@
-Competition install package: WebMCP_Catalog_Challenge_v1.0.0.ocmod.zip
-SHA-256: ca181448f7e87d2edb5e48be488d5c2aeca90143c7974b643f32067b0434e695
+Competition install package: WebMCP_Catalog_Challenge_v1.1.0.ocmod.zip
+SHA-256: 2e02095eb96f558ae620c27cb329cdc1b612417fcd4e66faba349873271bb209
 Built reproducibly from opencart-module/ by GitHub Actions and verified with unzip -t.
