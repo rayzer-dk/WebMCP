@@ -23,11 +23,13 @@ jobs:
         run: |
           set -euo pipefail
           rm -f dist/WebMCP_Catalog_Challenge_v1.0.0.ocmod.zip
+          rm -f dist/WebMCP_Catalog_Challenge_v1.1.0.ocmod.zip
           cd opencart-module
-          zip -qr -9 ../dist/WebMCP_Catalog_Challenge_v1.0.0.ocmod.zip install.xml upload
+          zip -qr -9 ../dist/WebMCP_Catalog_Challenge_v1.1.0.ocmod.zip install.xml upload
           cd ..
-          unzip -t dist/WebMCP_Catalog_Challenge_v1.0.0.ocmod.zip
-          sha256sum dist/WebMCP_Catalog_Challenge_v1.0.0.ocmod.zip | sed 's#dist/##' > dist/SHA256SUMS.txt
+          unzip -t dist/WebMCP_Catalog_Challenge_v1.1.0.ocmod.zip
+          sha256sum dist/WebMCP_Catalog_Challenge_v1.1.0.ocmod.zip | sed 's#dist/##' > dist/SHA256SUMS.txt
+          printf '%s\n' 'WebMCP Catalog Bridge competition edition v1.1.0' 'Built automatically from the public opencart-module source.' > dist/BUILD_INFO.txt
 
       - name: Commit synchronized package
         shell: bash
@@ -35,10 +37,10 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add dist/WebMCP_Catalog_Challenge_v1.0.0.ocmod.zip dist/SHA256SUMS.txt
+          git add -A dist
           if git diff --cached --quiet; then
             echo 'Package already synchronized.'
             exit 0
           fi
-          git commit -m 'Build audited competition OCMOD package'
+          git commit -m 'Build WebMCP Catalog Bridge v1.1.0 package'
           git push
