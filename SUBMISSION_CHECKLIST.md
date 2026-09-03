@@ -1,16 +1,17 @@
 # Submission checklist
 
-- [ ] Live URL works in ChatGPT in-app browser.
-- [ ] Site tools show Search Products and Get Product.
-- [ ] Main judge prompt returns relevant products in one tool-driven flow.
-- [ ] Visible product panel shows real images, price and stock.
-- [ ] Public GitHub repository is accessible.
-- [ ] GitHub detects the MIT LICENSE file.
-- [ ] README contains installation and testing instructions.
-- [ ] README clearly separates pre-existing FermaTeh from challenge WebMCP work.
-- [ ] Demo video is public, concise and contains audio.
-- [ ] Submission description explains WebMCP fit, UX improvement, human-agent collaboration and implementation.
-- [ ] Live URL points to the working storefront.
-- [ ] Repository URL points to https://github.com/rayzer-dk/WebMCP.
-- [ ] Final submission is saved before the deadline.
-- [ ] Do not change the submitted repo/site/submission during judging unless the official rules explicitly allow it.
+- [x] Live URL works in ChatGPT in-app browser: https://fermateh.com.ua/en/.
+- [x] Site tools expose Search Products and Get Product.
+- [x] Optional Add To Cart write tool is implemented and demonstrated.
+- [x] Main judge flow uses authoritative live product data.
+- [x] Shared human + AI results panel shows real images, current price and stock.
+- [x] Cart action updates the active OpenCart session and exposes a cart-only action receipt.
+- [x] Public GitHub repository is accessible.
+- [x] GitHub detects the MIT LICENSE file.
+- [x] README contains installation and testing instructions.
+- [x] README clearly separates pre-existing FermaTeh from challenge-period WebMCP work.
+- [x] Demo video URL is included: https://youtu.be/etBFEEBXYAA.
+- [x] Submission copy explains WebMCP fit, UX improvement, human-agent collaboration and implementation.
+- [x] GitHub Actions reproducibly builds the installable OCMOD package and verifies it with `unzip -t`.
+- [ ] Re-save/re-submit the final Devpost form after updating the video, live URL and Additional Info.
+- [ ] After the final deadline, freeze the submitted repo/site/video/submission for judging as required by the competition rules.
