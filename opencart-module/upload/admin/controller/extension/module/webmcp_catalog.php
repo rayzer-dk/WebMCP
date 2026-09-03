@@ -13,18 +13,9 @@ class ControllerExtensionModuleWebmcpCatalog extends Controller {
             $this->response->redirect($this->url->link('extension/module/webmcp_catalog', 'user_token=' . $this->session->data['user_token'], true));
         }
 
-        $data['heading_title'] = $this->language->get('heading_title');
-        $data['text_edit'] = $this->language->get('text_edit');
-        $data['text_enabled'] = $this->language->get('text_enabled');
-        $data['text_disabled'] = $this->language->get('text_disabled');
-        $data['entry_status'] = $this->language->get('entry_status');
-        $data['entry_live_results'] = $this->language->get('entry_live_results');
-        $data['entry_max_results'] = $this->language->get('entry_max_results');
-        $data['help_live_results'] = $this->language->get('help_live_results');
-        $data['help_max_results'] = $this->language->get('help_max_results');
-        $data['text_about'] = $this->language->get('text_about');
-        $data['button_save'] = $this->language->get('button_save');
-        $data['button_cancel'] = $this->language->get('button_cancel');
+        foreach (array('heading_title','text_edit','text_enabled','text_disabled','entry_status','entry_live_results','entry_max_results','entry_cart_action','help_live_results','help_max_results','help_cart_action','text_about','button_save','button_cancel') as $key) {
+            $data[$key] = $this->language->get($key);
+        }
         $data['error_warning'] = isset($this->error['warning']) ? $this->error['warning'] : '';
 
         $data['breadcrumbs'] = array();
@@ -35,7 +26,12 @@ class ControllerExtensionModuleWebmcpCatalog extends Controller {
         $data['action'] = $this->url->link('extension/module/webmcp_catalog', 'user_token=' . $this->session->data['user_token'], true);
         $data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true);
 
-        $fields = array('module_webmcp_catalog_status' => 0, 'module_webmcp_catalog_live_results' => 1, 'module_webmcp_catalog_max_results' => 6);
+        $fields = array(
+            'module_webmcp_catalog_status' => 0,
+            'module_webmcp_catalog_live_results' => 1,
+            'module_webmcp_catalog_max_results' => 6,
+            'module_webmcp_catalog_cart_action' => 0
+        );
         foreach ($fields as $key => $default) {
             if (isset($this->request->post[$key])) {
                 $data[$key] = $this->request->post[$key];
@@ -59,7 +55,8 @@ class ControllerExtensionModuleWebmcpCatalog extends Controller {
         $this->model_setting_setting->editSetting('module_webmcp_catalog', array(
             'module_webmcp_catalog_status' => 0,
             'module_webmcp_catalog_live_results' => 1,
-            'module_webmcp_catalog_max_results' => 6
+            'module_webmcp_catalog_max_results' => 6,
+            'module_webmcp_catalog_cart_action' => 0
         ));
     }
 
